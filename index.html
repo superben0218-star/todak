@@ -21,6 +21,20 @@
   <meta name="twitter:title" content="토닥 · TODAK — 순간은 흐르고, 기록은 남도록" />
   <meta name="twitter:description" content="임신부터 육아까지, 우리 아이의 모든 순간을 차분하게 기록하는 육아 다이어리." />
   <meta name="twitter:image" content="https://superben0218-star.github.io/todak/assets/hero-home.jpg" />
+  <link rel="canonical" href="https://superben0218-star.github.io/todak/" />
+
+  <!-- 구조화 데이터 (검색엔진용) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "토닥 · TODAK",
+    "url": "https://superben0218-star.github.io/todak/",
+    "inLanguage": "ko-KR",
+    "description": "임신부터 육아까지, 우리 아이의 모든 순간을 차분하게 기록하는 육아 다이어리. 2026 출시 · 사전등록 진행 중.",
+    "publisher": { "@type": "Organization", "name": "TODAK", "url": "https://superben0218-star.github.io/todak/" }
+  }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -319,7 +333,7 @@
           <form id="registerForm" class="reveal d2 mt-9 max-w-lg mx-auto flex flex-col sm:flex-row gap-3" novalidate>
             <label for="email" class="sr-only">이메일 주소</label>
             <input id="email" name="email" type="email" required autocomplete="email" placeholder="이메일 주소" class="flex-1 rounded-full px-6 py-4 bg-paper text-ink placeholder:text-muted/70 border border-transparent outline-none focus:border-olive" />
-            <button type="submit" class="rounded-full bg-olive text-night font-semibold px-7 py-4 hover:bg-oliveDeep hover:text-paper btn-lift cursor-pointer whitespace-nowrap">사전등록 하기</button>
+            <button id="registerBtn" type="submit" class="rounded-full bg-olive text-night font-semibold px-7 py-4 hover:bg-oliveDeep hover:text-paper btn-lift cursor-pointer whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed">사전등록 하기</button>
           </form>
           <p id="formMsg" role="status" aria-live="polite" class="mt-4 text-sm font-medium text-paper min-h-[1.25rem]"></p>
         </div>
@@ -410,9 +424,38 @@
     const faq=document.querySelectorAll('#faqList details');
     faq.forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) faq.forEach(o=>{ if(o!==d) o.open=false; }); }));
 
-    // register form
-    const form=document.getElementById('registerForm'), msg=document.getElementById('formMsg');
-    form.addEventListener('submit',(e)=>{ e.preventDefault(); const email=document.getElementById('email'); if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())){ msg.textContent='올바른 이메일 주소를 입력해 주세요.'; email.focus(); return; } msg.textContent='사전등록이 완료됐어요. 출시 소식을 가장 먼저 전해드릴게요.'; form.reset(); });
+    // ===== 사전등록 폼 =====
+    // 실제 이메일 수집을 켜려면 아래 FORM_ENDPOINT 에 Formspree 엔드포인트를 넣으세요.
+    //   1) https://formspree.io 가입(무료) → New Form
+    //   2) 발급된 주소(예: https://formspree.io/f/abcdwxyz)를 그대로 붙여넣기
+    // 비워두면(데모) 전송 없이 완료 메시지만 표시됩니다.
+    const FORM_ENDPOINT = "";
+
+    const form=document.getElementById('registerForm'), msg=document.getElementById('formMsg'), btn=document.getElementById('registerBtn');
+    const emailValid = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const email=document.getElementById('email');
+      const value=email.value.trim();
+      if(!emailValid(value)){ msg.textContent='올바른 이메일 주소를 입력해 주세요.'; email.focus(); return; }
+
+      // 데모 모드 (엔드포인트 미설정)
+      if(!FORM_ENDPOINT){
+        msg.textContent='사전등록이 완료됐어요. 출시 소식을 가장 먼저 전해드릴게요. (데모 — 실제 수집은 폼 연동 후)';
+        form.reset(); return;
+      }
+
+      // 실제 전송 모드
+      const original=btn.textContent;
+      btn.disabled=true; btn.textContent='등록 중…'; msg.textContent='';
+      try{
+        const res=await fetch(FORM_ENDPOINT,{ method:'POST', headers:{'Accept':'application/json'}, body:new FormData(form) });
+        if(res.ok){ msg.textContent='사전등록이 완료됐어요. 출시 소식을 가장 먼저 전해드릴게요.'; form.reset(); }
+        else{ msg.textContent='잠시 후 다시 시도해 주세요. 문제가 계속되면 메일로 문의해 주세요.'; }
+      }catch(_){ msg.textContent='네트워크 오류예요. 잠시 후 다시 시도해 주세요.'; }
+      finally{ btn.disabled=false; btn.textContent=original; }
+    });
   </script>
 </body>
 </html>

@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://superben0218-star.github.io/todak/sitemap.xml
