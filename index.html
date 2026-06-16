@@ -333,10 +333,12 @@
           <form id="registerForm" class="reveal d2 mt-9 max-w-lg mx-auto flex flex-col sm:flex-row gap-3" novalidate>
             <label for="email" class="sr-only">이메일 주소</label>
             <input id="email" name="email" type="email" required autocomplete="email" placeholder="이메일 주소" class="flex-1 rounded-full px-6 py-4 bg-paper text-ink placeholder:text-muted/70 border border-transparent outline-none focus:border-olive" />
-            <!-- 메일 제목/식별 (Formspree _subject) -->
-            <input type="hidden" name="_subject" value="토닥 사전등록 신청" />
-            <!-- 스팸 방지 허니팟: 사람에겐 보이지 않음, 봇이 채우면 무시 -->
-            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden" />
+            <!-- Web3Forms 설정 -->
+            <input type="hidden" name="access_key" value="57b6f196-6b69-4718-a66e-0323c663390a" />
+            <input type="hidden" name="subject" value="토닥 사전등록 신청" />
+            <input type="hidden" name="from_name" value="토닥 사전등록" />
+            <!-- 스팸 방지 허니팟(Web3Forms botcheck): 사람에겐 안 보임, 봇이 체크하면 무시 -->
+            <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden" style="display:none" />
             <button id="registerBtn" type="submit" class="rounded-full bg-olive text-night font-semibold px-7 py-4 hover:bg-oliveDeep hover:text-paper btn-lift cursor-pointer whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed">사전등록 하기</button>
           </form>
           <p id="formMsg" role="status" aria-live="polite" class="mt-4 text-sm font-medium text-paper min-h-[1.25rem]"></p>
@@ -428,20 +430,18 @@
     const faq=document.querySelectorAll('#faqList details');
     faq.forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) faq.forEach(o=>{ if(o!==d) o.open=false; }); }));
 
-    // ===== 사전등록 폼 =====
-    // 실제 이메일 수집을 켜려면 아래 FORM_ENDPOINT 에 Formspree 엔드포인트를 넣으세요.
-    //   1) https://formspree.io 가입(무료) → New Form
-    //   2) 발급된 주소(예: https://formspree.io/f/abcdwxyz)를 그대로 붙여넣기
-    // 비워두면(데모) 전송 없이 완료 메시지만 표시됩니다.
-    const FORM_ENDPOINT = "";
+    // ===== 사전등록 폼 (Web3Forms 연동) =====
+    // 신청 데이터는 폼의 access_key 에 연결된 이메일로 전송됩니다.
+    // 받는 이메일/키 변경은 https://web3forms.com 에서, 폼의 access_key 값만 교체하면 됩니다.
+    const FORM_ENDPOINT = "https://api.web3forms.com/submit";
 
     const form=document.getElementById('registerForm'), msg=document.getElementById('formMsg'), btn=document.getElementById('registerBtn');
     const emailValid = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
     form.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      // 허니팟이 채워졌으면 봇으로 간주하고 조용히 종료
-      if(form.elements['_gotcha'] && form.elements['_gotcha'].value){ return; }
+      // 허니팟이 체크됐으면 봇으로 간주하고 조용히 종료
+      if(form.elements['botcheck'] && form.elements['botcheck'].checked){ return; }
       const email=document.getElementById('email');
       const value=email.value.trim();
       if(!emailValid(value)){ msg.textContent='올바른 이메일 주소를 입력해 주세요.'; email.focus(); return; }
