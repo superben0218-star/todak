@@ -25,10 +25,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <script type="importmap">
-  { "imports": { "three": "https://unpkg.com/three@0.169.0/build/three.module.js" } }
-  </script>
-
   <style>
     :root{ --bg:#FDFDFC; --ink:#1c1a17; --muted:#8a847b; --forest:#2F6A4A; --line:#e9e5dd; }
     *{ box-sizing:border-box; }
@@ -150,60 +146,63 @@
     </div>
   </div>
 
-  <script type="module">
-    import * as THREE from 'three';
-
+  <script>
     const N = 121;
     const pad = n => 'frames/frame_' + String(n).padStart(4,'0') + '.jpg';
     const frames = [];
-    let loaded = 0;
+    let loaded = 0, started = false, kickRef = null;
     const lbar = document.querySelector('#lbar i');
     const loaderEl = document.getElementById('loader');
     const progressEl = document.getElementById('progress');
     const hintEl = document.querySelector('.hint');
+    const items = [...document.querySelectorAll('.cap-item')];
 
     for (let i=1; i<=N; i++){
       const im = new Image();
       im.decoding = 'async';
-      im.onload = im.onerror = () => { loaded++;
+      im.onload = im.onerror = () => {
+        loaded++;
         lbar.style.width = Math.round(loaded/N*100) + '%';
-        if (loaded === N) start();
+        if (!started && loaded >= Math.min(N, 12)) { started = true; start(); }  // 점진적 시작: 처음 몇 장만 받으면 시작, 나머지는 백그라운드 로드
+        else if (started && kickRef) kickRef();                                   // 새 프레임 도착 → 필요 시 1회 재페인트
       };
       im.src = pad(i);
       frames.push(im);
     }
 
+    function updateCaptions(p){
+      for (const it of items){
+        const c = +it.dataset.c, w = +it.dataset.w;
+        const o = Math.max(0, 1 - Math.abs(p - c)/w);
+        it.style.opacity = o.toFixed(3);
+        it.style.transform = 'translateY(' + ((1-o)*12).toFixed(1) + 'px)';
+        if (it.classList.contains('cta')) it.style.pointerEvents = o > 0.45 ? 'auto' : 'none';
+      }
+    }
+
     function start(){
+      // 가벼운 2D 캔버스 (WebGL 제거)
       const stage = document.getElementById('stage');
-      let W = innerWidth, H = innerHeight, DPR = Math.min(devicePixelRatio, 2);
-
-      const renderer = new THREE.WebGLRenderer({ antialias:false, alpha:false, powerPreference:'high-performance' });
-      renderer.setPixelRatio(DPR); renderer.setSize(W, H);
-      renderer.setClearColor(0xFDFDFC, 1);
-      stage.appendChild(renderer.domElement);
-
-      const scene = new THREE.Scene();
-      const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-      // offscreen canvas: current frame drawn 'contain' on a clean bg
       const cv = document.createElement('canvas');
-      const ctx = cv.getContext('2d');
-      function sizeCanvas(){ cv.width = Math.floor(W*DPR); cv.height = Math.floor(H*DPR); }
+      cv.style.display = 'block';
+      stage.appendChild(cv);
+      const ctx = cv.getContext('2d', { alpha:false });
+      let W, H, DPR, lastIdx = -1, cur = 0, running = false;
+
+      function sizeCanvas(){
+        W = innerWidth; H = innerHeight;
+        DPR = Math.min(devicePixelRatio || 1, 1.5);   // 모바일 픽셀 부하 절반
+        cv.width = Math.floor(W*DPR); cv.height = Math.floor(H*DPR);
+        cv.style.width = W+'px'; cv.style.height = H+'px';
+        lastIdx = -1;
+      }
       sizeCanvas();
 
-      const tex = new THREE.CanvasTexture(cv);
-      tex.colorSpace = THREE.SRGBColorSpace;
-      tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter;
-      const plane = new THREE.Mesh(new THREE.PlaneGeometry(2,2), new THREE.MeshBasicMaterial({ map:tex }));
-      scene.add(plane);
-
-      let lastIdx = -1;
       function draw(idx){
         const img = frames[idx];
-        if (!img || !img.complete || !img.naturalWidth) return;
+        if (!img || !img.complete || !img.naturalWidth) return false;
         const cw = cv.width, ch = cv.height, iw = img.naturalWidth, ih = img.naturalHeight;
         ctx.fillStyle = '#FDFDFC'; ctx.fillRect(0,0,cw,ch);
-        // diary in the lower area; keep the top clean for the headline (bigger on portrait/mobile)
         const portrait = ch > cw * 1.05;
         const topPad = ch * (portrait ? 0.24 : 0.30);
         const budgetH = ch - topPad - ch*0.05;
@@ -219,46 +218,33 @@
         g = ctx.createLinearGradient(0, dy+h, 0, dy+h-fh); g.addColorStop(0,C0); g.addColorStop(1,C1); ctx.fillStyle=g; ctx.fillRect(dx-1, dy+h-fh, w+2, fh);
         g = ctx.createLinearGradient(dx, 0, dx+fw, 0); g.addColorStop(0,C0); g.addColorStop(1,C1); ctx.fillStyle=g; ctx.fillRect(dx, dy-1, fw, h+2);
         g = ctx.createLinearGradient(dx+w, 0, dx+w-fw, 0); g.addColorStop(0,C0); g.addColorStop(1,C1); ctx.fillStyle=g; ctx.fillRect(dx+w-fw, dy-1, fw, h+2);
-        tex.needsUpdate = true;
+        return true;
       }
 
-      // scroll-driven scrubbing (forward on down, reverse on up) with smoothing
-      let cur = 0;
-      const items = [...document.querySelectorAll('.cap-item')];
-      function tick(){
+      // idle 렌더: 스크롤/스무딩 중일 때만 rAF 돌고, 멈추면 루프 종료 (발열·렉 제거)
+      function frame(){
         const max = document.documentElement.scrollHeight - innerHeight;
         const p = max>0 ? Math.min(1, Math.max(0, scrollY/max)) : 0;
         progressEl.style.width = (p*100) + '%';
-        // hide the scroll hint once moving
         hintEl.style.opacity = p > 0.02 ? '0' : '1';
-
         const target = p * (N-1);
-        cur += (target - cur) * 0.14;              // smoothing → buttery scrub both directions
+        cur += (target - cur) * 0.18;
+        if (Math.abs(target - cur) < 0.01) cur = target;   // 정착 → 루프 종료 조건
         const idx = Math.max(0, Math.min(N-1, Math.round(cur)));
-        if (idx !== lastIdx){ draw(idx); lastIdx = idx; }
-        renderer.render(scene, cam);
-
-        // cross-fade captions by scroll progress (kept in the clean top zone)
-        for (const it of items){
-          const c = +it.dataset.c, w = +it.dataset.w;
-          const o = Math.max(0, 1 - Math.abs(p - c)/w);
-          it.style.opacity = o.toFixed(3);
-          it.style.transform = 'translateY(' + ((1-o)*12).toFixed(1) + 'px)';
-          // only the CTA (with the form) becomes interactive, and only while visible
-          if (it.classList.contains('cta')) it.style.pointerEvents = o > 0.45 ? 'auto' : 'none';
-        }
-        requestAnimationFrame(tick);
+        if (idx !== lastIdx){ if (draw(idx)) lastIdx = idx; }
+        updateCaptions(p);
+        if (cur !== target) requestAnimationFrame(frame);
+        else running = false;
       }
+      function kick(){ if (!running){ running = true; requestAnimationFrame(frame); } }
+      kickRef = kick;
 
-      function resize(){
-        W = innerWidth; H = innerHeight; DPR = Math.min(devicePixelRatio, 2);
-        renderer.setPixelRatio(DPR); renderer.setSize(W, H);
-        sizeCanvas(); lastIdx = -1;
-      }
-      addEventListener('resize', resize, { passive:true });
+      addEventListener('scroll', kick, { passive:true });
+      let rt;
+      addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { sizeCanvas(); kick(); }, 120); }, { passive:true });
 
       loaderEl.classList.add('hide');
-      requestAnimationFrame(tick);
+      draw(0); updateCaptions(0); kick();
     }
 
     /* ---------- 사전등록 폼 (Web3Forms, 라이브와 동일 키) ---------- */
