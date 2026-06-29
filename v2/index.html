@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#FDFDFC" />
   <title>토닥 · TODAK — 흩어진 하루가 한 권의 추억으로</title>
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23FDFDFC'/%3E%3Cpath d='M12 19s-6-3.7-7.6-7.2C3.2 9 4.6 6.4 7 6.4c1.6 0 2.6.9 3 1.8.4-.9 1.4-1.8 3-1.8 2.4 0 3.8 2.6 2.6 5.4C18 15.3 12 19 12 19Z' fill='%232F6A4A'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23FDFDFC'/%3E%3Cpath d='M12 19s-6-3.7-7.6-7.2C3.2 9 4.6 6.4 7 6.4c1.6 0 2.6.9 3 1.8.4-.9 1.4-1.8 3-1.8 2.4 0 3.8 2.6 2.6 5.4C18 15.3 12 19 12 19Z' fill='%23E2887A'/%3E%3C/svg%3E" />
 
   <link rel="canonical" href="https://todak-app.com/v2/" />
   <meta property="og:type" content="website" />
@@ -26,7 +26,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <style>
-    :root{ --bg:#FDFDFC; --ink:#1c1a17; --muted:#8a847b; --forest:#2F6A4A; --line:#e9e5dd; }
+    :root{ --bg:#FDFDFC; --ink:#1c1a17; --muted:#8a847b; --forest:#E2887A; --line:#e9e5dd; }
     *{ box-sizing:border-box; }
     html{ scroll-behavior:auto; }
     body{ margin:0; background:var(--bg); color:var(--ink);
@@ -44,7 +44,7 @@
     #lbar i{ display:block; height:100%; width:0; background:var(--forest); transition:width .15s ease; }
 
     #progress{ position:fixed; top:0; left:0; height:2px; width:0; z-index:40;
-      background:linear-gradient(90deg,#2F6A4A,#8A9A4B); }
+      background:linear-gradient(90deg,#E2887A,#C2AD96); }
 
     /* scroll length only */
     #scroller{ height:480vh; }
@@ -80,7 +80,7 @@
     .btn{ display:inline-flex; align-items:center; gap:.5rem; margin-top:1.8rem; padding:.95rem 1.7rem;
       border-radius:999px; background:var(--forest); color:#fff; font-weight:600; text-decoration:none;
       transition:transform .25s cubic-bezier(.2,.7,.2,1), background-color .25s; }
-    .btn:hover{ transform:translateY(-2px); background:#234E37; }
+    .btn:hover{ transform:translateY(-2px); background:#C96F60; }
 
     .hint{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%); z-index:20;
       color:var(--muted); font-size:.72rem; letter-spacing:.2em; display:flex; flex-direction:column; align-items:center; gap:7px; }
@@ -260,7 +260,7 @@
       const original = btn.textContent; btn.disabled = true; btn.textContent = '등록 중…'; msg.textContent = '';
       try {
         const res = await fetch('https://api.web3forms.com/submit', { method:'POST', headers:{ 'Accept':'application/json' }, body:new FormData(form) });
-        if (res.ok) { msg.style.color = '#2F6A4A'; msg.textContent = '사전등록이 완료됐어요. 출시 소식을 가장 먼저 전해드릴게요.'; form.reset(); }
+        if (res.ok) { msg.style.color = '#E2887A'; msg.textContent = '사전등록이 완료됐어요. 출시 소식을 가장 먼저 전해드릴게요.'; form.reset(); }
         else { msg.style.color = '#b4452f'; msg.textContent = '잠시 후 다시 시도해 주세요.'; }
       } catch (_) { msg.style.color = '#b4452f'; msg.textContent = '네트워크 오류예요. 잠시 후 다시 시도해 주세요.'; }
       finally { btn.disabled = false; btn.textContent = original; }

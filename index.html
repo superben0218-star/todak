@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -9,7 +9,7 @@
   <!-- apply theme before paint (no flash) -->
   <script>(function(){try{var t=localStorage.getItem('todak-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23F3F0E7'/%3E%3Cpath d='M12 19s-6-3.7-7.6-7.2C3.2 9 4.6 6.4 7 6.4c1.6 0 2.6.9 3 1.8.4-.9 1.4-1.8 3-1.8 2.4 0 3.8 2.6 2.6 5.4C18 15.3 12 19 12 19Z' fill='%232F6A4A'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23F3F0E7'/%3E%3Cpath d='M12 19s-6-3.7-7.6-7.2C3.2 9 4.6 6.4 7 6.4c1.6 0 2.6.9 3 1.8.4-.9 1.4-1.8 3-1.8 2.4 0 3.8 2.6 2.6 5.4C18 15.3 12 19 12 19Z' fill='%23E2887A'/%3E%3C/svg%3E" />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://todak-app.com/" />
@@ -45,9 +45,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { darkMode:'class', theme: { extend: {
-      colors:{ ivory:'#FBFAF6', cream:'#F3F0E7', creamDeep:'#ECE6D8', sage:'#C9D6C2', sageDeep:'#A9BEA2',
-               forest:'#2F6A4A', forestDeep:'#234E37', forestNight:'#16301F', olive:'#8A9A4B',
-               ink:'#16181A', muted:'#8A8F8C', line:'#E7E2D6' },
+      colors:{ ivory:'#FBFAF6', cream:'#F3F0E7', creamDeep:'#ECE6D8', sage:'#E9C8BC', sageDeep:'#D9B0A2',
+               forest:'#E2887A', forestDeep:'#C96F60', forestNight:'#5A3640', olive:'#C2AD96',
+               ink:'#34272B', muted:'#9A8E84', line:'#E7E2D6' },
       fontFamily:{ serif:['Lora','"Nanum Myeongjo"','serif'], myeongjo:['"Nanum Myeongjo"','Lora','serif'],
                    sans:['Raleway','"Noto Sans KR"','system-ui','sans-serif'] },
     }}};
@@ -69,7 +69,7 @@
   <style>
     :root{ color-scheme:light; }
     html{ -webkit-font-smoothing:antialiased; }
-    body{ font-family:'Raleway','Noto Sans KR',sans-serif; color:#16181A; overflow-x:hidden;
+    body{ font-family:'Raleway','Noto Sans KR',sans-serif; color:#34272B; overflow-x:hidden;
       background:
         radial-gradient(90% 60% at 80% 12%, #FFFFFF 0%, rgba(255,255,255,0) 55%),
         radial-gradient(80% 70% at 12% 88%, #EFEADC 0%, rgba(239,234,220,0) 60%),
@@ -83,17 +83,17 @@
     #stage{ position:fixed; inset:0; z-index:0; pointer-events:none; }
     #stage canvas{ display:block; width:100%!important; height:100%!important; }
     #vignette{ position:absolute; inset:0; z-index:2; pointer-events:none;
-      background:radial-gradient(125% 95% at 50% 42%, transparent 52%, rgba(30,44,32,0.12) 100%); }
+      background:radial-gradient(125% 95% at 50% 42%, transparent 52%, rgba(60,40,46,0.12) 100%); }
 
     /* drifting aurora wash behind the WebGL canvas (canvas is transparent → shows through) */
     #bgwash{ position:fixed; inset:-25%; z-index:-1; pointer-events:none; filter:blur(48px); opacity:.75; }
     #bgwash i{ position:absolute; border-radius:50%; display:block; will-change:transform; }
     #bgwash .b1{ width:58vw; height:58vw; left:-6vw; top:-8vw;
-      background:radial-gradient(circle, rgba(201,214,194,.60), transparent 70%); animation:drift1 28s ease-in-out infinite alternate; }
+      background:radial-gradient(circle, rgba(233,200,188,.60), transparent 70%); animation:drift1 28s ease-in-out infinite alternate; }
     #bgwash .b2{ width:52vw; height:52vw; right:-8vw; bottom:-10vw;
       background:radial-gradient(circle, rgba(255,236,210,.60), transparent 70%); animation:drift2 34s ease-in-out infinite alternate; }
     #bgwash .b3{ width:40vw; height:40vw; left:35vw; top:30vh;
-      background:radial-gradient(circle, rgba(175,205,182,.45), transparent 70%); animation:drift3 24s ease-in-out infinite alternate; }
+      background:radial-gradient(circle, rgba(217,176,162,.45), transparent 70%); animation:drift3 24s ease-in-out infinite alternate; }
     @keyframes drift1{ from{ transform:translate(0,0) scale(1) } to{ transform:translate(9vw,7vw) scale(1.18) } }
     @keyframes drift2{ from{ transform:translate(0,0) scale(1) } to{ transform:translate(-8vw,-6vw) scale(1.12) } }
     @keyframes drift3{ from{ transform:translate(0,0) scale(1) } to{ transform:translate(-6vw,8vw) scale(1.22) } }
@@ -101,17 +101,17 @@
       background:radial-gradient(80% 70% at 50% 40%, #FFFFFF 0%, #F3EFE5 70%, #ECE6D8 100%);
       transition:opacity .9s ease; }
     #loader.hide{ opacity:0; pointer-events:none; }
-    .lmark{ font-family:'Nanum Myeongjo','Lora',serif; font-weight:800; color:#2F6A4A; font-size:2.4rem;
+    .lmark{ font-family:'Nanum Myeongjo','Lora',serif; font-weight:800; color:#E2887A; font-size:2.4rem;
       letter-spacing:.04em; opacity:0; animation:lmIn 1.1s cubic-bezier(.2,.7,.2,1) forwards; }
-    .lbar{ margin-top:18px; width:120px; height:2px; border-radius:99px; background:rgba(47,106,74,.18); overflow:hidden; }
-    .lbar i{ display:block; height:100%; width:40%; border-radius:99px; background:#2F6A4A; animation:lbar 1.1s ease-in-out infinite; }
+    .lbar{ margin-top:18px; width:120px; height:2px; border-radius:99px; background:rgba(226,136,122,.18); overflow:hidden; }
+    .lbar i{ display:block; height:100%; width:40%; border-radius:99px; background:#E2887A; animation:lbar 1.1s ease-in-out infinite; }
     @keyframes lmIn{ from{ opacity:0; transform:translateY(10px) } to{ opacity:1; transform:none } }
     @keyframes lbar{ 0%{ transform:translateX(-110%) } 100%{ transform:translateX(360%) } }
 
     main{ position:relative; z-index:10; }
 
     #progress{ position:fixed; top:0; left:0; height:3px; width:0; z-index:60;
-      background:linear-gradient(90deg,#2F6A4A,#8A9A4B); transition:width .08s linear; }
+      background:linear-gradient(90deg,#E2887A,#C2AD96); transition:width .08s linear; }
     #nav{ transition:background-color .4s ease, box-shadow .4s ease; }
     #nav.scrolled{ background:rgba(251,250,246,.78); backdrop-filter:blur(14px); box-shadow:0 1px 0 rgba(22,24,26,.06); }
 
@@ -166,22 +166,22 @@
     html.dark .text-ink\/45{ color:rgba(231,236,230,.42) }
     html.dark .text-ink\/20{ color:rgba(231,236,230,.22) }
     html.dark .text-muted{ color:#9AA39C }
-    html.dark .text-forest{ color:#8FD0A6 }
-    html.dark .text-olive{ color:#B6C36B }
+    html.dark .text-forest{ color:#F0AE9F }
+    html.dark .text-olive{ color:#D8C0A8 }
     /* surfaces */
     html.dark .bg-cream{ background-color:#222E27 }
     html.dark .bg-white\/90{ background-color:rgba(34,46,39,.92) }
     html.dark .bg-white\/80{ background-color:rgba(34,46,39,.82) }
     html.dark .bg-white\/70{ background-color:rgba(34,46,39,.72) }
     html.dark .hover\:bg-white:hover{ background-color:rgba(40,54,46,.95) }
-    html.dark .bg-forest\/10{ background-color:rgba(143,208,166,.14) }
+    html.dark .bg-forest\/10{ background-color:rgba(240,174,159,.14) }
     html.dark .border-line{ border-color:rgba(255,255,255,.1) }
     /* hero legibility shadow flips dark */
     html.dark .txt-shadow{ text-shadow:0 2px 30px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.5) }
     /* story keywords stay light (JS sets inline color) */
     html.dark #story .kw{ color:rgba(231,236,230,.9) !important }
     /* email input stays light card → force dark text */
-    html.dark #email{ color:#16181A }
+    html.dark #email{ color:#34272B }
     html.dark #email::placeholder{ color:rgba(22,24,26,.5) }
 
     @media (prefers-reduced-motion: reduce){
@@ -524,7 +524,7 @@
       gsap.from('#story .kw',{ autoAlpha:0, scale:0.55, y:14, duration:0.7, stagger:0.12, ease:'back.out(1.7)',
         scrollTrigger:{ trigger:'#story', start:'top 72%' }});
       gsap.utils.toArray('#story .kw').forEach((k,i)=> ScrollTrigger.create({ trigger:'#story', start:'top 60%',
-        onEnter:()=>gsap.to(k,{color:'#16181A',duration:0.5,delay:i*0.18}), onLeaveBack:()=>gsap.to(k,{color:'rgba(22,24,26,0.2)',duration:0.3}) }));
+        onEnter:()=>gsap.to(k,{color:'#34272B',duration:0.5,delay:i*0.18}), onLeaveBack:()=>gsap.to(k,{color:'rgba(22,24,26,0.2)',duration:0.3}) }));
       gsap.utils.toArray('#analysis .bar').forEach(b=> gsap.fromTo(b,{height:'0%'},{height:(b.dataset.h||60)+'%',duration:1,ease:'power3.out',
         scrollTrigger:{ trigger:'#analysis', start:'top 65%' }}));
       gsap.utils.toArray('.count').forEach(c=>{ const to=+c.dataset.to, o={v:0};
@@ -577,18 +577,18 @@
         s.bezierCurveTo(80,35,80,0,50,0); s.bezierCurveTo(35,0,25,25,25,25);
         const geo=new THREE.ExtrudeGeometry(s,{ depth:18, bevelEnabled:true, bevelThickness:12, bevelSize:9, bevelSegments:16, curveSegments:48 });
         geo.rotateX(Math.PI); geo.center(); geo.computeVertexNormals();
-        const mat=new THREE.MeshPhysicalMaterial({ color:0xC4DBCB, metalness:0, roughness:0.14,
+        const mat=new THREE.MeshPhysicalMaterial({ color:0xF0D2C8, metalness:0, roughness:0.14,
           transmission:1.0, thickness:3.2, ior:1.5, dispersion:3.2,
           clearcoat:1.0, clearcoatRoughness:0.12,
           iridescence:0.45, iridescenceIOR:1.32, iridescenceThicknessRange:[120,420],
-          sheen:0.6, sheenRoughness:0.3, sheenColor:new THREE.Color(0xE3F2E6),
+          sheen:0.6, sheenRoughness:0.3, sheenColor:new THREE.Color(0xFBEAE2),
           specularIntensity:1.0, specularColor:new THREE.Color(0xffffff),
-          attenuationColor:new THREE.Color(0x6FA886), attenuationDistance:0.7, envMapIntensity:1.6 });
+          attenuationColor:new THREE.Color(0xD98C7C), attenuationDistance:0.7, envMapIntensity:1.6 });
         const heart=new THREE.Mesh(geo,mat); heart.rotation.x=-0.12; scene.add(heart);
 
         // two-tone dimensional lighting (warm key + cool rim) + soft fill
         const key=new THREE.DirectionalLight(0xfff0d6,2.6); key.position.set(5,6,6); scene.add(key);
-        const rim=new THREE.DirectionalLight(0x9fe0c0,1.8); rim.position.set(-6,2,-4); scene.add(rim);
+        const rim=new THREE.DirectionalLight(0xF0B5A6,1.8); rim.position.set(-6,2,-4); scene.add(rim);
         const fill=new THREE.DirectionalLight(0xffe9cf,0.7); fill.position.set(0,-4,3); scene.add(fill);
 
         // soft aura behind the heart (grounds it without a hard shadow)
@@ -611,13 +611,13 @@
           const m=new THREE.PointsMaterial({ map:dot, color, size, transparent:true, opacity, depthWrite:false, sizeAttenuation:true });
           return new THREE.Points(g,m);
         }
-        const bokehFar=bokeh(60, 16, 0.34, 0xCBE0D0, 0.30);
-        const bokehMid=bokeh(40, 14, 0.5, 0xD7E6DC, 0.26);
-        const bokehNear=bokeh(28, 12, 0.7, 0xE7F1E7, 0.22);
+        const bokehFar=bokeh(60, 16, 0.34, 0xF2D6CC, 0.30);
+        const bokehMid=bokeh(40, 14, 0.5, 0xF5DED5, 0.26);
+        const bokehNear=bokeh(28, 12, 0.7, 0xFBEDE6, 0.22);
         scene.add(bokehFar, bokehMid, bokehNear);
 
         // large soft background orbs → volumetric depth & color richness
-        const orbColors=[0xC9D6C2,0xFFEAD0,0xBFD8C6,0xE7F1E7,0xD9E6DC,0xCFE0D2];
+        const orbColors=[0xEAC8BC,0xFFEAD0,0xECCFC3,0xFBEDE6,0xF3DDD3,0xEFD4C8];
         const orbs=[];
         for(let i=0;i<6;i++){
           const sp=new THREE.Sprite(new THREE.SpriteMaterial({ map:auraTex, color:orbColors[i%orbColors.length],
@@ -654,7 +654,7 @@
             else if(Math.abs(dy)>6){ tActive=false; return; } }
           if(tMode==='rotate'){ e.preventDefault(); const ddx=p.clientX-tlx; tlx=p.clientX; velY=ddx*0.006; userY+=velY; } }, {passive:false});
         addEventListener('touchend', ()=>{ tActive=false; });
-        const cGreen=new THREE.Color(0x6FA886), cDeep=new THREE.Color(0x2F6A4A), tmp=new THREE.Color();
+        const cGreen=new THREE.Color(0xD98C7C), cDeep=new THREE.Color(0xC96F60), tmp=new THREE.Color();
         function progress(){ const h=document.documentElement, m=h.scrollHeight-h.clientHeight; return m>0? h.scrollTop/m : 0; }
         let pSmooth=0;
 
